@@ -69,64 +69,42 @@ cleanup:
 }
 
 bool com_anthonyvd_driver_XBOControllerDriver::async_data_received(unsigned char* data, size_t length) {
-//    int i;
+    int i;
+    int offset;
+
 //    for (i=0;i <length ;i++) {
-//        printf("%u.",*(data+i));
+//        printf("%02x.",data[i]);
 //    }
 //    printf("\n");
 //    write_data(rumbleOne,5);
 //    if(data[0] == 0x20) {
 
-
-    if(true){
-        current_state.buttons = (data[3]<<8) | data[2];
+    //This data contains information for all the ports. Each port's worth of data is 9 bytes long.
+    
+    for (i=0;i<4;i++){
+        offset = i*9;
+        current_state.report_id=i+1;
+        current_state.buttons = (data[3+offset]<<8) | (data[2+offset]);
         
-//        //This is a state changed event
-//        unsigned char hat_switch = 0;
-//        
-//        if((data[5] & 0x09) == 0x09)
-//            hat_switch = 2;
-//        else if((data[5] & 0x0a) == 0x0a)
-//            hat_switch = 4;
-//        else if((data[5] & 0x06) == 0x06)
-//            hat_switch = 6;
-//        else if((data[5] & 0x05) == 0x05)
-//            hat_switch = 8;
-//        else if(data[5] & 0x01)
-//            hat_switch = 1;
-//        else if(data[5] & 0x08)
-//            hat_switch = 3;
-//        else if(data[5] & 0x02)
-//            hat_switch = 5;
-//        else if(data[5] & 0x04)
-//            hat_switch = 7;
-//        
-//        current_state.buttons = (hat_switch & 0x0f) << 12 |
-//        (data[4] & 0xf0) >> 4 |
-//        (data[5] & 0xf0) |
-//        (data[4] & 0x0f) << 8;
-//        
-//        current_state.left_trigger = data[8];
-//        current_state.right_trigger = data[9];
-//
-//        current_state.left_stick.x_axis = (data[11] << 8) | data[10];
-//        current_state.left_stick.y_axis = (data[13] << 8) | data[12];
-        current_state.left_stick.x_axis = data[4];
-        current_state.left_stick.y_axis = data[5];
-//
-        //        current_state.right_stick.x_axis = (data[15] << 8) | data[14];
-        //        current_state.right_stick.y_axis = (data[17] << 8) | data[16];
-        current_state.right_stick.x_axis = data[6];
-        current_state.right_stick.y_axis = data[7];
+        current_state.left_stick_x = data[4+offset];
+        current_state.left_stick_y = data[5+offset];
+
+        current_state.right_stick_x = data[6+offset];
+        current_state.right_stick_y = data[7+offset];
+        
+        current_state.left_trigger = data[8+offset];
+        current_state.right_trigger = data[9+offset];
         
         IOBufferMemoryDescriptor* descriptor = IOBufferMemoryDescriptor::inTaskWithOptions(current_task(),
                                                                                            kIODirectionIn | kIODirectionOut,
                                                                                            sizeof(XBOControllerState));
-        
         descriptor->writeBytes(0, &current_state, sizeof(XBOControllerState));
         IOReturn ret = handleReport(descriptor);
         log_iokit_err(ret, "[XBOController driver]Error making handleReport data");
-    }
+
+
+     }
+    
     return setup_async_read();
 }
 

@@ -3,31 +3,19 @@
 class IOUSBInterface;
 class IOUSBPipe;
 
-typedef struct JoystickState {
-    int16_t x_axis;
-    int16_t y_axis;
-} JoystickState;
-
+#pragma pack(push, 1)
 typedef struct XBOControllerState {
+    uint8_t report_id;
+    int8_t left_stick_x;
+    int8_t left_stick_y;
+    int8_t right_stick_x;
+    int8_t right_stick_y;
+    int8_t left_trigger;
+    int8_t right_trigger;
     uint16_t buttons;
-    uint8_t left_trigger;
-    uint8_t right_trigger;
-    JoystickState left_stick;
-    JoystickState right_stick;
 } XBOControllerState;
+#pragma pack(pop)
 
-//typedef struct XBOControllerState {
-//    uint8_t c0[5];
-//    uint8_t c1[37];
-//    uint8_t c2[8];
-//    uint8_t c3;
-//    uint8_t c4[8];
-//    uint8_t c5[25];
-//    uint8_t c6;
-//    uint8_t c7[2];
-//    uint8_t c8;
-//    uint8_t c9[2];
-//} XBOControllerState;
 
 class com_anthonyvd_driver_XBOControllerDriver : public IOHIDDevice {
     OSDeclareDefaultStructors(com_anthonyvd_driver_XBOControllerDriver)
@@ -58,6 +46,7 @@ private:
     IOUSBPipe* in_pipe;
     IOUSBPipe* out_pipe;
     
+//    GCAdapterState current_state;
     XBOControllerState current_state;
     
     bool terminated;
