@@ -64,6 +64,7 @@ void async_data_read(void* target, void* parameter, IOReturn status, UInt32 buff
     }
 cleanup:
     ctx->memory_descriptor->complete();
+    ctx->memory_descriptor->release();
     IOFree(ctx, sizeof(async_data_context));
 
 }
@@ -101,8 +102,7 @@ bool com_anthonyvd_driver_XBOControllerDriver::async_data_received(unsigned char
         descriptor->writeBytes(0, &current_state, sizeof(XBOControllerState));
         IOReturn ret = handleReport(descriptor);
         log_iokit_err(ret, "[XBOController driver]Error making handleReport data");
-
-
+        descriptor->release();
      }
     
     return setup_async_read();
@@ -125,6 +125,7 @@ bool com_anthonyvd_driver_XBOControllerDriver::write_data(void* buffer, size_t s
     
     IOReturn ret = out_pipe->Write(descriptor);
     IOReturn comp = descriptor->complete();
+    descriptor->release();
     if(log_iokit_err(prep, "[XBOController driver]Error preparing memory buffer") ||
        log_iokit_err(ret, "[XBOController driver]Error writing data to out_pipe") ||
        log_iokit_err(comp, "[XBOController driver]Error completing memory buffer")) {
@@ -165,10 +166,11 @@ bool com_anthonyvd_driver_XBOControllerDriver::setup_async_read() {
        log_iokit_err(ret, "[XBOController driver]Error in Read() call")) {
         
         descriptor->complete();
+        descriptor->release();
         IOFree(ctx, sizeof(async_data_context));
         return false;
     }
-    
+
     return true;
 }
 
