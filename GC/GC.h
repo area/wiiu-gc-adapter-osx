@@ -31,6 +31,7 @@ public:
     
     //IOHIDDevice methods
     virtual IOReturn newReportDescriptor(IOMemoryDescriptor ** descriptor ) const;
+    virtual OSString * newProductString() const;
     
     //com_anthonyvd_driver_XBOControllerDriver methods
     bool async_data_received(unsigned char* data, size_t length);

@@ -359,3 +359,8 @@ IOReturn com_anthonyvd_driver_XBOControllerDriver::newReportDescriptor(IOMemoryD
     (*descriptor)->writeBytes(0, &XBOControllerHIDReport, sizeof(XBOControllerHIDReport));
     return kIOReturnSuccess;
 }
+
+OSString* com_anthonyvd_driver_XBOControllerDriver::newProductString() const {
+    return OSString::withCString("WUP-028");
+}
+
