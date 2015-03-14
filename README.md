@@ -1,5 +1,9 @@
 # WiiU Gamecube adapter KEXT for OSX
 
+##Update:
+I recommend you use this driver instead, which has all for controller ports working correctly: https://github.com/area/osx-wiiu-gcc-adapter
+
+##Description
 Based on a similar bare-bones KEXT for an XBOX One controller:
 
 https://github.com/anthonyvd/XBOControllerDriver
